@@ -88,7 +88,6 @@ function add_user_list($struct)
       }
     }
   }
-  debug($struct);
 }
 
 
@@ -162,8 +161,27 @@ function analyze_read($read, $struct)
     $struct->full_cmd = $read;
     $buff = substr($read, strpos($read, " ", 1) + 1);
     $struct->cmd = substr($buff, 0, strpos($buff, " "));
+
+    // here is where we check if any module needs to be activated before the core
+    if (isset($struct->module_array[$struct->cmd])) {
+      foreach ($struct->module_array[$struct->cmd] as $ar_mod) {
+	if ($ar_mod["order"] == 0) {
+	  $ar_mod["func"]($struct);
+	}
+      }
+    }
+
+    // here we launch the core
     if (isset($cmd_tab[$struct->cmd]))
       $cmd_tab[$struct->cmd]($struct);
+
+    // and here we also check the modules to activate those who needs to run after the core
+    if (isset($struct->module_array[$struct->cmd])) {
+      foreach ($struct->module_array[$struct->cmd] as $ar_mod) {
+	if ($ar_mod["order"] == 1)
+	  $ar_mod["func"]($struct);    
+      }
+    }
   }
   else if (strncmp($read, "PING :", 6) == 0) {
     $pong_cmd = "PONG :" . substr($read, 6) . "\r\n";
@@ -187,13 +205,21 @@ function main_serv($struct)
 }
 
 
-
-
 $SERV_URL = 'irc.freenode.org';
 $PORT = 6667;
 
 $struct = new Struct;
+$struct->module_array = array();
 $struct->chans = array();
+$dir = opendir("modules");
+if ($dir !== false) {
+  while ($elem = readdir($dir)) {
+    if (substr($elem, -4, 4) == ".php") {
+      include "modules/".$elem;
+    }
+  }
+}
+
 $struct->sock = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
 if (!socket_connect($struct->sock, $SERV_URL, $PORT)) {
   echo 'Unable to connect to ' . $SERV_URL . ':' . $PORT . "\n";

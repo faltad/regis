@@ -11,6 +11,7 @@ class Struct
   public $full_cmd;
   public $chans;
   public $nick;
+  public $module_array; // array("CMD" => array("func" => func_name, "order" => order));
 };
 
 
@@ -18,7 +19,7 @@ class Chan
 {
   public $name;
   public $is_op;
-  public $members; // array(User, is_op); ex: array('regis', false)
+  public $members; // array(User, is_op); ex: array('regis' => false)
 }
 
 ?>
