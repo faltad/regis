@@ -12,6 +12,7 @@ class Struct
   public $chans;
   public $nick;
   public $module_array; // array("CMD" => array("func" => func_name, "order" => order));
+  public $module_buffer;
 };
 
 

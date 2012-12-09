@@ -210,16 +210,17 @@ $PORT = 6667;
 
 $struct = new Struct;
 $struct->module_array = array();
+$struct->module_buffer = array();
 $struct->chans = array();
-$dir = opendir("modules");
-if ($dir !== false) {
-  while ($elem = readdir($dir)) {
+$dir_module = opendir("modules");
+if ($dir_module !== false) {
+  while ($elem = readdir($dir_module)) {
     if (substr($elem, -4, 4) == ".php") {
       include "modules/".$elem;
     }
   }
 }
-
+closedir($dir_module);
 $struct->sock = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
 if (!socket_connect($struct->sock, $SERV_URL, $PORT)) {
   echo 'Unable to connect to ' . $SERV_URL . ':' . $PORT . "\n";

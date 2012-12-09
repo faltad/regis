@@ -37,12 +37,13 @@ echo "Initialization of module test\n";
 ** and an order: 0 to be call before the core, 1 after.
 */
 
+/*
 $struct->module_array["PRIVMSG"][] = array(
 					   "func" => "test_echopriv",
 					   "order"=> 0
-
-
 					   );
+*/
+
 /*
 ** We can of course initialize several commands for the
 ** module, or several times the same command with a different
