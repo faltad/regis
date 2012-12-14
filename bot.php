@@ -39,9 +39,8 @@ function nickname_used($struct)
   send_username($struct, true);
 }
 
-function bot_ready($struct)
+function bot_ready($struct, $chan)
 {
-  $chan = '##testysdsd';
   $join_cmd = "JOIN $chan\r\n";
   $struct->chans[$chan] = new Chan;
   $struct->chans[$chan]->name = $chan;
@@ -78,14 +77,12 @@ function add_user_list($struct)
     $op = $member[0] == '@' ? true : false;
     if ($op == true)
       $member = substr($member, 1);
-    if ($member == $array[2]) {
+    if ($member == $struct->nick) {
       if ($op == true)
 	$struct->chans[$chan]->is_op = true;
     }
     else {
-      if (!in_array($member, $struct->chans[$chan]->members)) {
-	$struct->chans[$chan]->members[$member] = $op;
-      }
+      $struct->chans[$chan]->members[$member] = $op;
     }
   }
 }
@@ -140,7 +137,9 @@ function kick_cmd($struct)
 
 function debug($struct)
 {
+  echo "\n";
   var_dump($struct->chans);
+  echo "\n";
 }
 
 function analyze_read($read, $struct)
@@ -148,7 +147,6 @@ function analyze_read($read, $struct)
   $cmd_tab = array(
 		   "NOTICE" => "user_cmd",
 		   "433" => "nickname_used",
-		   "376" => "bot_ready", // end_motd
 		   "422" => "nickname_used", // no_motd
 		   "JOIN" => "join_cmd",
 		   "353" => "add_user_list", // /names list
