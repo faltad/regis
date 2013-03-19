@@ -177,7 +177,7 @@ function analyze_read($read, $struct)
     if (isset($struct->module_array[$struct->cmd])) {
       foreach ($struct->module_array[$struct->cmd] as $ar_mod) {
 	if ($ar_mod["order"] == 1)
-	  $ar_mod["func"]($struct);    
+	  $ar_mod["func"]($struct);
       }
     }
   }
